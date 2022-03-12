@@ -1,0 +1,45 @@
+version: "3.8"
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb-accounts
+    hostname: $MONGO_DB_HOSTNAME
+    ports:
+     - "${MONGO_DB_PORT:-27017}:${MONGO_DB_PORT:-27017}"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: $MONGO_ROOT_USERNAME
+      MONGO_INITDB_ROOT_PASSWORD: $MONGO_ROOT_PASSWORD
+      MONGO_INITDB_DATABASE: $MONGO_DB_DATABASE
+      MONGO_DB_USERNAME: $MONGO_DB_USERNAME
+      MONGO_DB_PASSWORD: $MONGO_DB_PASSWORD
+    volumes:
+      - $MONGO_DATA_HOST_PATH:/data/db/
+      - $MONGO_LOG_HOST_PATH:/var/log/mongodb/
+      - $MONGO_INITDB_SCRIPTS_HOST_PATH:/docker-entrypoint-initdb.d/
+    networks:
+      - main-network
+    command: ["--bind_ip_all"]
+
+  app:
+    build: .
+    image: bootcamp/ms-account
+    container_name: msaccount
+    ports:
+      - "${APP_PORT:-8081}:${APP_PORT_CONTAINER:-8081}"
+    environment:
+      - SERVER_PORT=$APP_PORT
+      - LOG_PATH=$LOG_PATH
+      - SPRING_PROFILES_ACTIVE=$SPRING_PROFILES_ACTIVE
+      - SPRING_DATA_MONGODB_HOST=$MONGO_DB_HOSTNAME
+      - SPRING_DATA_MONGODB_PORT=$MONGO_DB_PORT
+      - SPRING_DATA_MONGODB_DATABASE=$MONGO_DB_DATABASE
+      - SPRING_DATA_MONGODB_PASSWORD=$MONGO_DB_PASSWORD
+    depends_on:
+      - mongodb
+    networks:
+      - main-network
+
+networks:
+  main-network:
+    external:
+      name: $NETWORK_NAME
