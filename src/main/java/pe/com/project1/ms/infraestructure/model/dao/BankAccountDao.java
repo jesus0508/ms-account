@@ -6,24 +6,24 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
-import pe.com.project1.ms.domain.Account;
+import pe.com.project1.ms.domain.BankAccount;
 
 @Data
 @Document("account")
-public class AccountDao {
+public class BankAccountDao {
 	@Id
 	private String id;
-	private String accountNumber;
+	private String bankAccountNumber;
 	private BigDecimal balance;
 	private boolean isLocked;
-	private String customerId;
-	
-	public AccountDao(Account account) {
+	private String accountHolderId;
+
+	public BankAccountDao(BankAccount account) {
 		this.id = account.getId();
-		this.accountNumber = account.getAccountNumber();
+		this.bankAccountNumber = account.getBankAccountNumber();
 		this.balance = account.getBalance();
 		this.isLocked = account.isLocked();
-		this.customerId = account.getCustomerId();
+		this.accountHolderId = account.getAccountHolderId();
 	}
-	
+
 }

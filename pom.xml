@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>pe.com.project1</groupId>
-	<artifactId>ms-account</artifactId>
+	<artifactId>ms-bank-account</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>ms-account</name>
+	<name>ms-bank-account</name>
 	<description>Demo project for Spring Boot Reactive</description>
 	<properties>
 		<java.version>11</java.version>

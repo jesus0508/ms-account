@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Account {
+public class BankAccount {
 	private String id;
-	private String accountNumber;
+	private String bankAccountNumber;
 	private BigDecimal balance;
 	private boolean isLocked;
-	private String customerId;
+	private String accountHolderId;
 }
