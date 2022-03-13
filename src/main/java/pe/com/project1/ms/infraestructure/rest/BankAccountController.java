@@ -13,7 +13,7 @@ import pe.com.project1.ms.domain.BankAccount;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/accounts")
+@RequestMapping("/bank-accounts")
 public class BankAccountController {
 
 	@Autowired
