@@ -1,6 +1,7 @@
 package pe.com.project1.ms.domain;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,11 +14,11 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BankAccount {
+public class BankingTransaction {
 	private String id;
-	private String bankAccountNumber;
-	private BigDecimal balance;
-	private BankAccountState bankAccountState;
-	private String accountHolderId;
-	private BankingTransactionHistory bankingTransactionHistory;
+	private String toBankAccountId;
+	private String fromBankAccountId;
+	private BigDecimal mount;
+	private LocalDateTime ocurredAt;
+	private BankingTransactionType bankingTransaction;
 }

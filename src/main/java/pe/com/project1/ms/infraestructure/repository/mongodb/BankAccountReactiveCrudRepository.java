@@ -3,9 +3,13 @@ package pe.com.project1.ms.infraestructure.repository.mongodb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import pe.com.project1.ms.application.exceptions.NotFoundException;
 import pe.com.project1.ms.application.model.BankAccountRepository;
 import pe.com.project1.ms.domain.BankAccount;
+import pe.com.project1.ms.domain.BankAccountState;
+import pe.com.project1.ms.domain.BankingTransactionHistory;
 import pe.com.project1.ms.infraestructure.model.dao.BankAccountDao;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
@@ -28,18 +32,66 @@ public class BankAccountReactiveCrudRepository implements BankAccountRepository 
 				.map(this::mapBankAccountDaoToBankAccount);
 	}
 
-	private BankAccount mapBankAccountDaoToBankAccount(BankAccountDao bankAccountDao) {
-		return BankAccount.builder()
-				.bankAccountNumber(bankAccountDao.getBankAccountNumber())
-				.balance(bankAccountDao.getBalance())
-				.isLocked(bankAccountDao.isLocked())
-				.accountHolderId(bankAccountDao.getAccountHolderId())
-				.build();
+	@Override
+	public Mono<BankAccount> updateBankAccountState(String bankAccountNumber, BankAccountState bankAccountState) {
+		return bankAccountReactiveMongoRepository
+				.findByBankAccountNumber(bankAccountNumber)
+				.switchIfEmpty(Mono.error(new NotFoundException("Non existent banckAccount: " + bankAccountNumber)))
+				.map(bankAccountDao -> this.updateState(bankAccountDao, bankAccountState))
+				.flatMap(bankAccountDaoMono -> bankAccountDaoMono)
+				.map(this::mapBankAccountDaoToBankAccount);
 	}
 
 	@Override
-	public Mono<BankAccount> update(BankAccount banckAccount, String bankAccountNumber) {
+	public Flux<BankAccount> findByAccountHolderId(String accountHolderId) {
+		return bankAccountReactiveMongoRepository
+				.findByAccountHolderId(accountHolderId)
+				.map(this::mapBankAccountDaoToBankAccount);
+	}
+
+	@Override
+	public Flux<BankingTransactionHistory> getBankingTransactionHistoryById(String id) {
 		return null;
 	}
 
+	
+	private Mono<BankAccountDao> updateState(BankAccountDao bankAccountDao, BankAccountState bankAccountState) {
+		bankAccountDao.setBankAccountState(bankAccountState);
+		return bankAccountReactiveMongoRepository.save(bankAccountDao);
+	}
+
+	private BankAccount mapBankAccountDaoToBankAccount(BankAccountDao bankAccountDao) {
+		BankAccount bankAccount = new BankAccount();
+		bankAccount.setId(bankAccountDao.getId());
+		bankAccount.setBankAccountNumber(bankAccountDao.getBankAccountNumber());
+		bankAccount.setBalance(bankAccountDao.getBalance());
+		bankAccount.setBankAccountState(bankAccountDao.getBankAccountState());
+		bankAccount.setAccountHolderId(bankAccountDao.getAccountHolderId());
+		bankAccount.setBankingTransactionHistory(bankAccountDao.getBankingTransactionHistory());
+		return bankAccount;
+	}
+
+	private BankAccountDao mapBankAccountToBankAccountDao(BankAccount bankAccount) {
+		BankAccountDao bankAccountDao = new BankAccountDao();
+		bankAccountDao.setId(bankAccount.getId());
+		bankAccountDao.setBankAccountNumber(bankAccount.getBankAccountNumber());
+		bankAccountDao.setBalance(bankAccount.getBalance());
+		bankAccountDao.setBankAccountState(bankAccount.getBankAccountState());
+		bankAccountDao.setAccountHolderId(bankAccount.getAccountHolderId());
+		bankAccountDao.setBankingTransactionHistory(bankAccount.getBankingTransactionHistory());
+		return bankAccountDao;
+	}
+
+	@Override
+	public Mono<BankAccount> update(BankAccount bankAccount, String bankAccountNumber) {
+
+		return null;
+	}
+
+	@Override
+	public Flux<BankAccount> findAll() {
+		return bankAccountReactiveMongoRepository
+				.findAll()
+				.map(this::mapBankAccountDaoToBankAccount);
+	}
 }
