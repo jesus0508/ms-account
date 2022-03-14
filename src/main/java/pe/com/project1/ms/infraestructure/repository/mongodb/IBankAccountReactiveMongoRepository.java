@@ -11,4 +11,7 @@ public interface IBankAccountReactiveMongoRepository extends ReactiveMongoReposi
 	Mono<BankAccountDao> findByBankAccountNumber(String accountNumber);
 
 	Flux<BankAccountDao> findByAccountHolderId(String accountHolderId);
+
+	Flux<BankAccountDao> findByBankAccountType(String bankAccountType);
+	
 }

@@ -1,4 +1,4 @@
-package pe.com.project1.ms.domain;
+package pe.com.project1.ms.domain.bank.account;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum BankAccountState {
 	LOCK("LOCK"),
-	UNLOCK("UNLOCK");
-	
+	UNLOCK("UNLOCK"),
+	DELETED("DELETED");
 	private String value;
 }

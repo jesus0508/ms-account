@@ -1,4 +1,4 @@
-package pe.com.project1.ms.domain;
+package pe.com.project1.ms.domain.bank.account;
 
 import java.math.BigDecimal;
 
@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pe.com.project1.ms.domain.bank.transaction.BankingTransactionHistory;
 
 @Builder
 @Setter
@@ -17,7 +18,9 @@ public class BankAccount {
 	private String id;
 	private String bankAccountNumber;
 	private BigDecimal balance;
-	private BankAccountState bankAccountState;
 	private String accountHolderId;
+	private BankAccountType bankAccountType;
+	private BankAccountState bankAccountState;
+	private BankAccountTerms bankAccountTerms;
 	private BankingTransactionHistory bankingTransactionHistory;
 }

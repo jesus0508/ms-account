@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import pe.com.project1.ms.application.BankAccountService;
-import pe.com.project1.ms.domain.BankAccount;
-import pe.com.project1.ms.domain.BankingTransactionHistory;
+import pe.com.project1.ms.domain.bank.account.BankAccount;
+import pe.com.project1.ms.domain.bank.transaction.BankingTransactionHistory;
 import pe.com.project1.ms.infraestructure.rest.request.UpdateStateAccountRequest;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -23,7 +23,7 @@ public class BankAccountController {
 	@Autowired
 	private BankAccountService bankAccountService;
 
-	@GetMapping()
+	@GetMapping
 	public Flux<BankAccount> getAll() {
 		return bankAccountService.findAll();
 	}
@@ -38,11 +38,16 @@ public class BankAccountController {
 		return bankAccountService.save(bankAccount);
 	}
 
+	@GetMapping("/bank-account-type/{bankAccountType}")
+	public Flux<BankAccount> getBankAccountsByBankAccountType(@PathVariable String bankAccountType) {
+		return bankAccountService.findByBankAccountType(bankAccountType);
+	}
+
 	@GetMapping("/account-holder-id/{accountHolderId}")
 	public Flux<BankAccount> getBankAccountsByAccountHolderId(@PathVariable String accountHolderId) {
 		return bankAccountService.findByAccountHolderId(accountHolderId);
 	}
-
+	
 	@GetMapping("/{id}/bank-transaction-history")
 	public Flux<BankingTransactionHistory> getBankingTransactionHistoryByAccountHolderId(@PathVariable String id) {
 		return bankAccountService.getBankingTransactionHistoryById(id);

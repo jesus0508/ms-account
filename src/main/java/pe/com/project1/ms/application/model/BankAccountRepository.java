@@ -1,8 +1,8 @@
 package pe.com.project1.ms.application.model;
 
-import pe.com.project1.ms.domain.BankAccount;
-import pe.com.project1.ms.domain.BankAccountState;
-import pe.com.project1.ms.domain.BankingTransactionHistory;
+import pe.com.project1.ms.domain.bank.account.BankAccount;
+import pe.com.project1.ms.domain.bank.account.BankAccountState;
+import pe.com.project1.ms.domain.bank.transaction.BankingTransactionHistory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -20,4 +20,7 @@ public interface BankAccountRepository {
 	Mono<BankAccount> updateBankAccountState(String bankAccountNumber, BankAccountState bankAccountState);
 
 	Flux<BankAccount> findAll();
+	
+	Flux<BankAccount> findByBankAccountType(String bankAccountType);
+
 }

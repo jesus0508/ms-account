@@ -1,4 +1,4 @@
-package pe.com.project1.ms.domain;
+package pe.com.project1.ms.domain.bank.transaction;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
