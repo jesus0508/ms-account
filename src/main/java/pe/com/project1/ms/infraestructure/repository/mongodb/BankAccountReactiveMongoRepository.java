@@ -8,14 +8,13 @@ import pe.com.project1.ms.application.exceptions.NotFoundException;
 import pe.com.project1.ms.application.model.BankAccountRepository;
 import pe.com.project1.ms.domain.bank.account.BankAccount;
 import pe.com.project1.ms.domain.bank.account.BankAccountState;
-import pe.com.project1.ms.domain.bank.transaction.BankingTransactionHistory;
 import pe.com.project1.ms.infraestructure.model.dao.BankAccountDao;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
 @Repository
-public class BankAccountReactiveCrudRepository implements BankAccountRepository {
+public class BankAccountReactiveMongoRepository implements BankAccountRepository {
 
 	@Autowired
 	private IBankAccountReactiveMongoRepository bankAccountReactiveMongoRepository;
@@ -52,11 +51,6 @@ public class BankAccountReactiveCrudRepository implements BankAccountRepository 
 	}
 
 	@Override
-	public Flux<BankingTransactionHistory> getBankingTransactionHistoryById(String id) {
-		return null;
-	}
-
-	@Override
 	public Mono<BankAccount> update(BankAccount bankAccount, String bankAccountNumber) {
 		return null;
 	}
@@ -80,7 +74,7 @@ public class BankAccountReactiveCrudRepository implements BankAccountRepository 
 		bankAccount.setBankAccountType(bankAccountDao.getBankAccountType());
 		bankAccount.setBankAccountState(bankAccountDao.getBankAccountState());
 		bankAccount.setBankAccountTerms(bankAccountDao.getBankAccountTerms());
-		bankAccount.setBankingTransactionHistory(bankAccountDao.getBankingTransactionHistory());
+		bankAccount.setBankingTransactions(bankAccountDao.getBankingTransactions());
 		return bankAccount;
 	}
 
@@ -93,7 +87,7 @@ public class BankAccountReactiveCrudRepository implements BankAccountRepository 
 		bankAccountDao.setBankAccountType(bankAccount.getBankAccountType());
 		bankAccountDao.setBankAccountState(bankAccount.getBankAccountState());
 		bankAccountDao.setBankAccountTerms(bankAccount.getBankAccountTerms());
-		bankAccountDao.setBankingTransactionHistory(bankAccount.getBankingTransactionHistory());
+		bankAccountDao.setBankingTransactions(bankAccount.getBankingTransactions());
 		return bankAccountDao;
 	}
 
@@ -101,6 +95,13 @@ public class BankAccountReactiveCrudRepository implements BankAccountRepository 
 	public Flux<BankAccount> findByBankAccountType(String bankAccountType) {
 		return bankAccountReactiveMongoRepository
 				.findByBankAccountType(bankAccountType)
+				.map(this::mapBankAccountDaoToBankAccount);
+	}
+
+	@Override
+	public Mono<BankAccount> findById(String id) {
+		return bankAccountReactiveMongoRepository
+				.findById(id)
 				.map(this::mapBankAccountDaoToBankAccount);
 	}
 

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import pe.com.project1.ms.application.BankAccountService;
 import pe.com.project1.ms.domain.bank.account.BankAccount;
-import pe.com.project1.ms.domain.bank.transaction.BankingTransactionHistory;
 import pe.com.project1.ms.infraestructure.rest.request.UpdateStateAccountRequest;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -48,14 +47,9 @@ public class BankAccountController {
 		return bankAccountService.findByAccountHolderId(accountHolderId);
 	}
 	
-	@GetMapping("/{id}/bank-transaction-history")
-	public Flux<BankingTransactionHistory> getBankingTransactionHistoryByAccountHolderId(@PathVariable String id) {
-		return bankAccountService.getBankingTransactionHistoryById(id);
-	}
-	
 	@PatchMapping("/bank-account-number/{bankAccountNumber}")
 	public Mono<BankAccount> patchBankAccountState(@PathVariable String bankAccountNumber, @RequestBody UpdateStateAccountRequest updateStateAccountRequest){
 		return bankAccountService.updateBankAccountState(bankAccountNumber, updateStateAccountRequest);
 	}
-
+	
 }

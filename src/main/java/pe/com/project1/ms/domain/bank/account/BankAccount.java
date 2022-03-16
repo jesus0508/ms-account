@@ -1,14 +1,17 @@
 package pe.com.project1.ms.domain.bank.account;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import pe.com.project1.ms.domain.bank.transaction.BankingTransactionHistory;
+import lombok.ToString;
+import pe.com.project1.ms.domain.bank.transaction.BankingTransaction;
 
+@ToString
 @Builder
 @Setter
 @Getter
@@ -22,5 +25,14 @@ public class BankAccount {
 	private BankAccountType bankAccountType;
 	private BankAccountState bankAccountState;
 	private BankAccountTerms bankAccountTerms;
-	private BankingTransactionHistory bankingTransactionHistory;
+	private List<BankingTransaction> bankingTransactions;
+
+	public void deposit(BigDecimal amount) {
+		balance = balance.add(amount);
+	}
+
+	public void withdraw(BigDecimal amount) {
+		balance = balance.subtract(amount);
+	}
+
 }

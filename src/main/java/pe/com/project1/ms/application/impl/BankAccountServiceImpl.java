@@ -1,6 +1,8 @@
 package pe.com.project1.ms.application.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -11,7 +13,8 @@ import pe.com.project1.ms.application.exceptions.ConflictException;
 import pe.com.project1.ms.application.model.BankAccountRepository;
 import pe.com.project1.ms.domain.bank.account.BankAccount;
 import pe.com.project1.ms.domain.bank.account.BankAccountType;
-import pe.com.project1.ms.domain.bank.transaction.BankingTransactionHistory;
+import pe.com.project1.ms.domain.bank.transaction.BankingTransaction;
+import pe.com.project1.ms.domain.bank.transaction.BankingTransactionType;
 import pe.com.project1.ms.domain.customer.Customer;
 import pe.com.project1.ms.domain.customer.CustomerType;
 import pe.com.project1.ms.infraestructure.rest.request.UpdateStateAccountRequest;
@@ -27,7 +30,7 @@ public class BankAccountServiceImpl implements BankAccountService {
 
 	@Autowired
 	private BankAccountRepository bankAccountRepository;
-
+	
 	@Override
 	public Mono<BankAccount> findByBankAccountNumber(String bankAccountNumber) {
 		return bankAccountRepository.findByBankAccountNumber(bankAccountNumber);
@@ -43,10 +46,9 @@ public class BankAccountServiceImpl implements BankAccountService {
 				.bodyToMono(Customer.class)
 				.map(customer -> customer.getCustomerType())
 				.flatMap(customerType -> this.assertThatCustomerCanCreateAnBankAccount(customerType, bankAccount))
-				.then(Mono.just(bankAccount))
-				.flatMap(account -> bankAccountRepository.save(account));
+				.then(bankAccountRepository.save(bankAccount));
 	}
-
+	
 	private Mono<Void> assertThatCustomerCanCreateAnBankAccount(CustomerType customerType, BankAccount bankAccount) {
 		log.debug("assertThatCustomerCanCreateAnBankAccount(customerType: {}, bankAccount: {})", customerType,
 				bankAccount);
@@ -74,12 +76,14 @@ public class BankAccountServiceImpl implements BankAccountService {
 				});
 	}
 	
-	private boolean checkBankAccountConstraint(BankAccount existingBankAccount, BankAccount bankAccount, List<BankAccountType> accountsWithConstraints) {
+	private boolean checkBankAccountConstraint(BankAccount existingBankAccount, BankAccount bankAccount,
+			List<BankAccountType> accountsWithConstraints) {
 		BankAccountType existingBankAccountType = existingBankAccount.getBankAccountType();
 		BankAccountType bankAccountType = bankAccount.getBankAccountType();
 		boolean alreadyHaveAnAccountBank = bankAccountType.equals(existingBankAccount.getBankAccountType());
-		boolean complyConstraint = accountsWithConstraints.indexOf(existingBankAccountType) != -1 && accountsWithConstraints.indexOf(bankAccountType) != -1;
-		return  alreadyHaveAnAccountBank || complyConstraint;
+		boolean complyConstraint = accountsWithConstraints.indexOf(existingBankAccountType) != -1
+				&& accountsWithConstraints.indexOf(bankAccountType) != -1;
+		return alreadyHaveAnAccountBank || complyConstraint;
 	}
 	
 	@Override
@@ -101,17 +105,28 @@ public class BankAccountServiceImpl implements BankAccountService {
 	}
 
 	@Override
-	public Flux<BankingTransactionHistory> getBankingTransactionHistoryById(String id) {
-		return bankAccountRepository.getBankingTransactionHistoryById(id);
-	}
-
-	@Override
 	public Flux<BankAccount> findAll() {
-		return bankAccountRepository.findAll();
+		return bankAccountRepository
+				.findAll();
 	}
 
 	@Override
 	public Flux<BankAccount> findByBankAccountType(String bankAccountType) {
 		return bankAccountRepository.findByBankAccountType(bankAccountType);
 	}
+
+	@Override
+	public Mono<BankAccount> updateBalance(BankAccount bankAccount, BankingTransaction bankingTransaction) {
+		BankingTransactionType bankingTransactionType = bankingTransaction.getBankingTransactionType();
+		BigDecimal amount = bankingTransaction.getAmount();
+		if (bankingTransactionType.equals(BankingTransactionType.WITHDRAWAL)) {
+			bankAccount.withdraw(amount);
+		} else if (bankingTransactionType.equals(BankingTransactionType.DEPOSIT)) {
+			bankAccount.deposit(amount);
+		} else {
+			return Mono.error(new RuntimeException("Transaccion no valida"));
+		}
+		return bankAccountRepository.save(bankAccount);
+	}
+
 }
