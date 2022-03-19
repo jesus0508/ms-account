@@ -1,3 +1,5 @@
+LOG_PATH_IS_UNDEFINED/
+*-local.properties
 .env
 HELP.md
 target/
