@@ -9,7 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class WebClientConfiguration {
 	
-	private static final String MS_CUSTOMER_BASE_URL = "http://localhost:9081/customers/";
+	private static final String MS_CUSTOMER_BASE_URL = "MS-CUSTOMERS";
 	
     @Bean
     public WebClient customerWebClient(WebClient.Builder webClientBuilder) {
