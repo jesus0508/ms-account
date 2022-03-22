@@ -78,19 +78,6 @@ public class BankAccountReactiveMongoRepository implements BankAccountRepository
 		return bankAccount;
 	}
 
-	private BankAccountDao mapBankAccountToBankAccountDao(BankAccount bankAccount) {
-		BankAccountDao bankAccountDao = new BankAccountDao();
-		bankAccountDao.setId(bankAccount.getId());
-		bankAccountDao.setBankAccountNumber(bankAccount.getBankAccountNumber());
-		bankAccountDao.setBalance(bankAccount.getBalance());
-		bankAccountDao.setAccountHolderId(bankAccount.getAccountHolderId());
-		bankAccountDao.setBankAccountType(bankAccount.getBankAccountType());
-		bankAccountDao.setBankAccountState(bankAccount.getBankAccountState());
-		bankAccountDao.setBankAccountTerms(bankAccount.getBankAccountTerms());
-		bankAccountDao.setBankingTransactions(bankAccount.getBankingTransactions());
-		return bankAccountDao;
-	}
-
 	@Override
 	public Flux<BankAccount> findByBankAccountType(String bankAccountType) {
 		return bankAccountReactiveMongoRepository

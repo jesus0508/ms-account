@@ -23,7 +23,7 @@ services:
       
   app:
     build: .
-    image: bootcamp/ms-bankaccount
+    image: bootcamp/ms-bank-account
     container_name: msbankaccount
     #restart: on-failure
     ports:

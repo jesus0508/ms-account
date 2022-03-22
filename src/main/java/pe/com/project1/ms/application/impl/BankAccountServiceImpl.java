@@ -44,7 +44,7 @@ public class BankAccountServiceImpl implements BankAccountService {
 				.uri(accountHolderId)
 				.retrieve()
 				.bodyToMono(Customer.class)
-				.map(customer -> customer.getCustomerType())
+				.map(Customer::getCustomerType)
 				.flatMap(customerType -> this.assertThatCustomerCanCreateAnBankAccount(customerType, bankAccount))
 				.then(bankAccountRepository.save(bankAccount));
 	}
@@ -54,16 +54,16 @@ public class BankAccountServiceImpl implements BankAccountService {
 				bankAccount);
 		if (customerType.equals(CustomerType.ENTERPRISE)) {
 			List<BankAccountType> accountsWithConstraints = List.of(BankAccountType.SAVING, BankAccountType.FIXED_TERM);
-			return this.assertThatCustomerDontHaveAnBankAccount(customerType, bankAccount, accountsWithConstraints);
+			return this.assertThatCustomerDontHaveAnBankAccount(bankAccount, accountsWithConstraints);
 		} else if (customerType.equals(CustomerType.PERSONAL)) {
 			List<BankAccountType> accountsWithConstraints = List.of(BankAccountType.CURRENT, BankAccountType.FIXED_TERM);
-			return this.assertThatCustomerDontHaveAnBankAccount(customerType, bankAccount, accountsWithConstraints);
+			return this.assertThatCustomerDontHaveAnBankAccount(bankAccount, accountsWithConstraints);
 		} else {
 			return Mono.error(new RuntimeException("Tipo de cliente no soportado!!"));
 		}
 	}
 	
-	private Mono<Void> assertThatCustomerDontHaveAnBankAccount(CustomerType customerType, BankAccount bankAccount, List<BankAccountType> accountsWithConstraints) {
+	private Mono<Void> assertThatCustomerDontHaveAnBankAccount(BankAccount bankAccount, List<BankAccountType> accountsWithConstraints) {
 		return 	bankAccountRepository
 				.findByAccountHolderId(bankAccount.getAccountHolderId())
 				.filter(existingBankAccount -> this.checkBankAccountConstraint(existingBankAccount, bankAccount, accountsWithConstraints))

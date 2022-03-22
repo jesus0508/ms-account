@@ -31,7 +31,6 @@ public class BankingTransactionServiceImpl implements BankingTransactionService 
 		return this.asserThatCanMakeTransaction(bankingTransaction)
 				.doOnNext(bt -> log.debug(bt.toString()))
 				.then(bankingTransactionRepository.save(bankingTransaction));
-				//.flatMap(bt -> bankingTransactionRepository.save(bt));
 	}
 		
 	private Mono<BankAccount> asserThatCanMakeTransaction(BankingTransaction bankingTransaction) {
@@ -44,7 +43,7 @@ public class BankingTransactionServiceImpl implements BankingTransactionService 
 	}
 	
 	private boolean checkBalance(BankAccount bankAccount, BankingTransactionType bankingTransactionType, BigDecimal amount) {
-		return bankingTransactionType.equals(BankingTransactionType.DEPOSIT) || bankAccount.getBalance().compareTo(amount) != -1;
+		return bankingTransactionType.equals(BankingTransactionType.DEPOSIT) || bankAccount.getBalance().compareTo(amount) >= 0;
 	}
 
 	@Override
