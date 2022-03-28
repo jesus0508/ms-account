@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BankAccountTerms {
-	private double monthlyMaintenanceFee;
-	private int transactionLimitations;
+    private double monthlyMaintenanceFee;
+    private int transactionLimitations;
 }

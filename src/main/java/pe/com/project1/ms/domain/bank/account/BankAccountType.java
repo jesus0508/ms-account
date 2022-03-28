@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum BankAccountType {
-	SAVING("SAVING"),
-	CURRENT("CURRENT"),
-	FIXED_TERM("FIXED_TERM");
-	private String value;
+    SAVING("SAVING"),
+    CURRENT("CURRENT"),
+    FIXED_TERM("FIXED_TERM");
+    private final String value;
 }

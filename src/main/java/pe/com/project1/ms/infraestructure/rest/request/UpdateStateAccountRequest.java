@@ -9,6 +9,6 @@ import pe.com.project1.ms.domain.bank.account.BankAccountState;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateStateAccountRequest {
-	private String bankAccountNumber;
-	private BankAccountState bankAccountState;
+    private String bankAccountNumber;
+    private BankAccountState bankAccountState;
 }

@@ -9,15 +9,15 @@ import org.springframework.transaction.reactive.TransactionalOperator;
 
 @Configuration
 public class MongoReactiveConfig {
-	
-	@Bean
-	public TransactionalOperator transactionalOperator(ReactiveTransactionManager txm) {
-		return TransactionalOperator.create(txm);
-	}
-	
-	@Bean
-	public ReactiveTransactionManager transactionManager(ReactiveMongoDatabaseFactory dbf) {
-		return new ReactiveMongoTransactionManager(dbf);
-	}
+
+    @Bean
+    public TransactionalOperator transactionalOperator(ReactiveTransactionManager txm) {
+        return TransactionalOperator.create(txm);
+    }
+
+    @Bean
+    public ReactiveTransactionManager transactionManager(ReactiveMongoDatabaseFactory dbf) {
+        return new ReactiveMongoTransactionManager(dbf);
+    }
 
 }

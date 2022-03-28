@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum BankAccountState {
-	LOCK("LOCK"),
-	UNLOCK("UNLOCK"),
-	DELETED("DELETED");
-	private String value;
+    LOCK("LOCK"),
+    UNLOCK("UNLOCK"),
+    DELETED("DELETED");
+    private final String value;
 }

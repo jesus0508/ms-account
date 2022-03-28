@@ -6,9 +6,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface BankingTransactionService {
-	Mono<BankingTransaction> save(BankingTransactionRequest bankingTransactionRequest);
+    Mono<BankingTransaction> save(BankingTransactionRequest bankingTransactionRequest);
 
-	Flux<BankingTransaction> findAll();
+    Flux<BankingTransaction> findAll();
 
-	Flux<BankingTransaction> findAllByBankAccountNumber(String bankAccountId);
+    Flux<BankingTransaction> findAllByBankAccountNumber(String bankAccountId);
 }
