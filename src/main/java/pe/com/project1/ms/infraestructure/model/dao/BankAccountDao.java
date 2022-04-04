@@ -5,14 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import pe.com.project1.ms.domain.bank.account.BankAccount;
-import pe.com.project1.ms.domain.bank.account.BankAccountState;
-import pe.com.project1.ms.domain.bank.account.BankAccountTerms;
-import pe.com.project1.ms.domain.bank.account.BankAccountType;
-import pe.com.project1.ms.domain.bank.transaction.BankingTransaction;
+import pe.com.project1.ms.domain.account.BankAccount;
+import pe.com.project1.ms.domain.account.BankAccountTerms;
+import pe.com.project1.ms.domain.account.BankAccountType;
+import pe.com.project1.ms.domain.product.ProductState;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -21,22 +20,24 @@ import java.util.List;
 public class BankAccountDao {
     @Id
     private String id;
+    private String name;
     private String bankAccountNumber;
     private BigDecimal balance;
-    private String accountHolderId;
+    private String customerId;
     private BankAccountType bankAccountType;
-    private BankAccountState bankAccountState;
+    private ProductState productState;
     private BankAccountTerms bankAccountTerms;
-    private List<BankingTransaction> bankingTransactions;
+    private LocalDateTime createdAt;
 
     public BankAccountDao(BankAccount account) {
         this.id = account.getId();
+        this.name = account.getBankAccountType() + " ACCOUNT";
         this.bankAccountNumber = account.getBankAccountNumber();
         this.balance = account.getBalance();
-        this.accountHolderId = account.getAccountHolderId();
+        this.customerId = account.getCustomerId();
         this.bankAccountType = account.getBankAccountType();
-        this.bankAccountState = account.getBankAccountState();
+        this.productState = account.getProductState();
         this.bankAccountTerms = account.getBankAccountTerms();
-        this.bankingTransactions = account.getBankingTransactions();
+        this.createdAt = account.getCreatedAt();
     }
 }

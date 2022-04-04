@@ -6,7 +6,7 @@ services:
     hostname: $MONGO_DB_HOST
     #restart: on-failure
     ports:
-      - "29017:${MONGO_DB_PORT:-27017}"
+      - "${MONGO_DB_EXTERNAL_PORT:-29017}:${MONGO_DB_PORT:-27017}"
     environment:
       MONGO_INITDB_ROOT_USERNAME: "${MONGO_ROOT_USERNAME}"
       MONGO_INITDB_ROOT_PASSWORD: "${MONGO_ROOT_PASSWORD}"
@@ -25,6 +25,7 @@ services:
     build: .
     image: bootcamp/ms-bank-account
     container_name: msbankaccount
+    hostname: MS-BANK-ACCOUNT
     #restart: on-failure
     ports:
       - "${APP_PORT:-8081}:${APP_PORT_CONTAINER:-8081}"
@@ -46,5 +47,4 @@ services:
       
 networks:
   main-network:
-    external:
       name: $NETWORK_NAME

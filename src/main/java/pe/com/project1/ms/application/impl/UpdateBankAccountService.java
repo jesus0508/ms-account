@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pe.com.project1.ms.application.UpdateBankAccountUseCase;
 import pe.com.project1.ms.application.persistence.BankAccountRepository;
-import pe.com.project1.ms.domain.bank.account.BankAccount;
+import pe.com.project1.ms.domain.account.BankAccount;
 import pe.com.project1.ms.infraestructure.rest.request.UpdateStateAccountRequest;
 import reactor.core.publisher.Mono;
 
@@ -20,6 +20,6 @@ public class UpdateBankAccountService implements UpdateBankAccountUseCase {
     public Mono<BankAccount> updateBankAccountState(String bankAccountNumber, UpdateStateAccountRequest updateStateAccountRequest) {
         log.debug("UpdateStateAccount {}", updateStateAccountRequest);
         return bankAccountRepository.updateBankAccountState(bankAccountNumber,
-                updateStateAccountRequest.getBankAccountState());
+                updateStateAccountRequest.getProductState());
     }
 }

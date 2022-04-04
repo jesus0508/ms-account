@@ -1,3 +1,3 @@
-./mwnw clean package
-docker-compose --env-file "./.env" build
-docker-compose --env-file "./.env" up -d
+./mvnw clean install -DskipTests
+docker-compose --env-file ".env" build
+docker-compose --env-file ".env" up -d

@@ -1,10 +1,9 @@
-package pe.com.project1.ms.domain.bank.account;
+package pe.com.project1.ms.domain.account;
 
 import lombok.*;
-import pe.com.project1.ms.domain.bank.transaction.BankingTransaction;
+import pe.com.project1.ms.domain.product.Product;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @ToString
 @Builder
@@ -12,15 +11,12 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BankAccount {
-    private String id;
+public class BankAccount extends Product {
+
     private String bankAccountNumber;
     private BigDecimal balance;
-    private String accountHolderId;
     private BankAccountType bankAccountType;
-    private BankAccountState bankAccountState;
     private BankAccountTerms bankAccountTerms;
-    private List<BankingTransaction> bankingTransactions;
 
     public void deposit(BigDecimal amount) {
         balance = balance.add(amount);

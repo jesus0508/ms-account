@@ -1,8 +1,8 @@
 package pe.com.project1.ms.application.persistence;
 
-import pe.com.project1.ms.domain.bank.account.BankAccount;
-import pe.com.project1.ms.domain.bank.account.BankAccountState;
-import pe.com.project1.ms.domain.bank.account.BankAccountType;
+import pe.com.project1.ms.domain.account.BankAccount;
+import pe.com.project1.ms.domain.account.BankAccountType;
+import pe.com.project1.ms.domain.product.ProductState;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -11,11 +11,9 @@ public interface BankAccountRepository {
 
     Mono<BankAccount> save(BankAccount bankAccount);
 
-    Mono<BankAccount> update(BankAccount bankAccount, String bankAccountNumber);
-
     Flux<BankAccount> findByAccountHolderId(String accountHolderId);
 
-    Mono<BankAccount> updateBankAccountState(String bankAccountNumber, BankAccountState bankAccountState);
+    Mono<BankAccount> updateBankAccountState(String bankAccountNumber, ProductState productState);
 
     Flux<BankAccount> findAll();
 

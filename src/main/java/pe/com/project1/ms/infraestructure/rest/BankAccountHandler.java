@@ -9,7 +9,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import pe.com.project1.ms.application.FindBankAccountUseCase;
 import pe.com.project1.ms.application.OpenBankAccountUseCase;
 import pe.com.project1.ms.application.UpdateBankAccountUseCase;
-import pe.com.project1.ms.domain.bank.account.BankAccount;
+import pe.com.project1.ms.domain.account.BankAccount;
 import pe.com.project1.ms.infraestructure.rest.request.OpenAccountRequest;
 import pe.com.project1.ms.infraestructure.rest.request.UpdateStateAccountRequest;
 import reactor.core.CorePublisher;
@@ -31,8 +31,8 @@ public class BankAccountHandler {
     }
 
     public Mono<ServerResponse> getBankAccountById(ServerRequest request) {
-        Mono<BankAccount> bankAccountMono;
-        return null;
+        Mono<BankAccount> bankAccountMono = findBankAccountUseCase.findById(request.pathVariable("id"));
+        return this.toServerResponse(bankAccountMono, HttpStatus.OK);
     }
 
     public Mono<ServerResponse> getAllBankAccountsByAccountHolderId(ServerRequest request) {

@@ -2,4 +2,4 @@ spring:
   application:
     name: ms-bank-accounts
   profiles:
-    active: local
+    active: dev

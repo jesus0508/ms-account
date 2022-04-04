@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import pe.com.project1.ms.domain.bank.account.BankAccountType;
+import pe.com.project1.ms.domain.account.BankAccountType;
 import pe.com.project1.ms.domain.customer.CustomerType;
 
 import java.util.List;
@@ -19,5 +19,4 @@ public class OpenAccountRequest {
     private CustomerType customerType;
     private List<String> accountHoldersId;
     private List<String> authorizedSignersId;
-
 }

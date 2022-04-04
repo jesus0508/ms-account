@@ -4,14 +4,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pe.com.project1.ms.application.OpenBankAccountUseCase;
+import pe.com.project1.ms.application.gateway.BankAccountBalanceManagementService;
+import pe.com.project1.ms.application.gateway.CustomersProductsOverviewService;
 import pe.com.project1.ms.application.persistence.BankAccountRepository;
-import pe.com.project1.ms.domain.bank.account.BankAccount;
-import pe.com.project1.ms.domain.bank.account.BankAccountState;
-import pe.com.project1.ms.domain.bank.account.BankAccountType;
+import pe.com.project1.ms.domain.account.BankAccount;
+import pe.com.project1.ms.domain.account.BankAccountBalance;
+import pe.com.project1.ms.domain.account.BankAccountTerms;
+import pe.com.project1.ms.domain.account.BankAccountType;
+import pe.com.project1.ms.domain.product.Product;
+import pe.com.project1.ms.domain.product.ProductState;
 import pe.com.project1.ms.infraestructure.rest.request.OpenAccountRequest;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -19,14 +25,22 @@ import java.math.BigDecimal;
 public class OpenBankAccountService implements OpenBankAccountUseCase {
 
     private final BankAccountRepository bankAccountRepository;
-
+    private final CustomersProductsOverviewService customersProductsOverviewService;
+    private final BankAccountBalanceManagementService bankAccountBalanceManagement;
+    
     @Override
     public Mono<BankAccount> openBankAccount(OpenAccountRequest openAccountRequest) {
         String accountHolderId = openAccountRequest.getAccountHolderId();
-        return Mono.when(this.assertThatCustomerDosentHaveDebt(accountHolderId), this.canOpenBankAccount(openAccountRequest))
+        Mono<BankAccount> bankAccountCreated = Mono.when(this.assertThatCustomerDosentHaveDebt(accountHolderId), this.canOpenBankAccount(openAccountRequest))
                 .then(Mono.just(openAccountRequest))
                 .map(this::mapOpenAccountRequestToBankAccount)
                 .flatMap(bankAccountRepository::save);
+        
+        Mono<Product> productMono = bankAccountCreated.flatMap(bankAccount -> customersProductsOverviewService.postCustomersProductsOverview(bankAccount));
+        Mono<BankAccountBalance> bankAccountBalanceMono = bankAccountCreated.flatMap(bankAccount -> bankAccountBalanceManagement.postBankAccountBalanceManagement(bankAccount));
+        
+        return Mono.when(productMono, bankAccountBalanceMono, bankAccountCreated)
+        		.then(bankAccountCreated);
     }
 
     private Mono<Boolean> assertThatCustomerDosentHaveDebt(String accountHolderId) {
@@ -34,7 +48,7 @@ public class OpenBankAccountService implements OpenBankAccountUseCase {
         Mono<Boolean> hasDebtMono = Mono.just(false);
         return hasDebtMono.flatMap(hastDebt -> {
             if (hastDebt) {
-                return Mono.error(new RuntimeException("Solo se le permite abrir cuentas corrientes"));
+                return Mono.error(new RuntimeException("El cliente tiene una deuda pendiente!"));
             }
             return Mono.just(hastDebt);
         });
@@ -46,8 +60,8 @@ public class OpenBankAccountService implements OpenBankAccountUseCase {
         return bankAccountRepository.existByAccountHolderIdAndAccountType(customerId, bankAccounType)
                 .flatMap(hasAccount -> {
                     if (hasAccount) {
-                    	log.debug("El cliente ya tiene una cuenta de este tipo");
-                    	return Mono.error(new RuntimeException("El cliente ya tiene una cuenta de este tipo"));
+                        log.debug("El cliente ya tiene una cuenta de este tipo");
+                        return Mono.error(new RuntimeException("El cliente ya tiene una cuenta de este tipo"));
                     }
                     return Mono.just(hasAccount);
                 });
@@ -71,7 +85,7 @@ public class OpenBankAccountService implements OpenBankAccountUseCase {
                 Mono<Boolean> hasAccountMono = this.assertThatPersonalCustomerDosentHaveBankAccount(openAccountRequest);
                 Mono<Boolean> hasCreditCardMono = this.assertThatCustomerHasCreditCard(openAccountRequest.getAccountHolderId());
                 return Mono.when(hasAccountMono, hasCreditCardMono)
-                		.then(Mono.just(true));
+                        .then(Mono.just(true));
             default:
                 return Mono.error(new RuntimeException("Tipo de cliente no soportado!!"));
         }
@@ -82,7 +96,7 @@ public class OpenBankAccountService implements OpenBankAccountUseCase {
         Mono<Boolean> hasCreditCardMono = Mono.just(true);
         return hasCreditCardMono.flatMap(hasCreditCard -> {
             if (!hasCreditCard) {
-            	return Mono.error(new RuntimeException("Cliente no tiene una tarjeta de credito"));
+                return Mono.error(new RuntimeException("Cliente no tiene una tarjeta de credito"));
             }
             return Mono.just(hasCreditCard);
         });
@@ -90,12 +104,14 @@ public class OpenBankAccountService implements OpenBankAccountUseCase {
 
     private BankAccount mapOpenAccountRequestToBankAccount(OpenAccountRequest openAccountRequest) {
         BankAccount bankAccount = new BankAccount();
+        bankAccount.setName("Cuenta Bancaria");
+        bankAccount.setCustomerId(openAccountRequest.getAccountHolderId());
         bankAccount.setBankAccountNumber("123456678");
         bankAccount.setBalance(BigDecimal.ZERO);
-        bankAccount.setAccountHolderId(openAccountRequest.getAccountHolderId());
         bankAccount.setBankAccountType(openAccountRequest.getBankAccountType());
-        bankAccount.setBankAccountState(BankAccountState.UNLOCK);
-        bankAccount.setBankAccountTerms(null);
+        bankAccount.setBankAccountTerms(new BankAccountTerms());
+        bankAccount.setProductState(ProductState.ACTIVE);
+        bankAccount.setCreatedAt(LocalDateTime.now());
         return bankAccount;
     }
 
