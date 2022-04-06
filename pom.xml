@@ -20,12 +20,7 @@
 		<site.version>3.11.0</site.version>
 		<project-info-reports.version>3.2.2</project-info-reports.version>
 		<checkstyle.version>3.1.2</checkstyle.version>
-		<jacoco.version>0.8.7</jacoco.version>
 		<sonar.version>3.9.1.2184</sonar.version>
-		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
-		<sonar.language>java</sonar.language>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -98,28 +93,6 @@
 				<artifactId>sonar-maven-plugin</artifactId>
 				<version>${sonar.version}</version>
 			</plugin>
-			<!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>${jacoco.version}</version>
-				<executions>
-					<execution>
-						<id>prepare-agent</id>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-						<phase>test-compile</phase>
-					</execution>
-					<execution>
-						<id>report-aggregate</id>
-						<goals>
-							<goal>report-aggregate</goal>
-						</goals>
-						<phase>verify</phase>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 
@@ -151,18 +124,6 @@
 				</reportSets>
 			</plugin>
 
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>${jacoco.version}</version>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>report</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
 		</plugins>
 	</reporting>
 

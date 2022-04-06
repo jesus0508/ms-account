@@ -30,17 +30,16 @@ public class OpenBankAccountService implements OpenBankAccountUseCase {
     
     @Override
     public Mono<BankAccount> openBankAccount(OpenAccountRequest openAccountRequest) {
+    	BankAccount bankAccount = this.mapOpenAccountRequestToBankAccount(openAccountRequest);
         String accountHolderId = openAccountRequest.getAccountHolderId();
         Mono<BankAccount> bankAccountCreated = Mono.when(this.assertThatCustomerDosentHaveDebt(accountHolderId), this.canOpenBankAccount(openAccountRequest))
-                .then(Mono.just(openAccountRequest))
-                .map(this::mapOpenAccountRequestToBankAccount)
-                .flatMap(bankAccountRepository::save);
+                .then(Mono.just(bankAccount));
         
-        Mono<Product> productMono = bankAccountCreated.flatMap(bankAccount -> customersProductsOverviewService.postCustomersProductsOverview(bankAccount));
-        Mono<BankAccountBalance> bankAccountBalanceMono = bankAccountCreated.flatMap(bankAccount -> bankAccountBalanceManagement.postBankAccountBalanceManagement(bankAccount));
-        
-        return Mono.when(productMono, bankAccountBalanceMono, bankAccountCreated)
-        		.then(bankAccountCreated);
+        Mono<Product> productMono = bankAccountCreated.flatMap(customersProductsOverviewService::postCustomersProductsOverview);
+        Mono<BankAccountBalance> bankAccountBalanceMono = bankAccountCreated.flatMap(bankAccountBalanceManagement::postBankAccountBalanceManagement);
+
+        return Mono.when(productMono, bankAccountBalanceMono)
+        		.then(bankAccountRepository.save(bankAccount));
     }
 
     private Mono<Boolean> assertThatCustomerDosentHaveDebt(String accountHolderId) {

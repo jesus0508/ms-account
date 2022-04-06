@@ -1,5 +1,6 @@
 package pe.com.project1.ms.infraestructure.rest;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -10,6 +11,11 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import pe.com.project1.ms.application.FindBankAccountUseCase;
 import pe.com.project1.ms.application.OpenBankAccountUseCase;
 import pe.com.project1.ms.application.UpdateBankAccountUseCase;
+import pe.com.project1.ms.domain.account.BankAccount;
+import reactor.core.publisher.Flux;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @WebFluxTest
 @ContextConfiguration(classes = {BankAccountRouter.class, BankAccountHandler.class})
@@ -27,16 +33,16 @@ class BankAccountControllerTest {
 
     @Test
     void testGetAll() {
-//		final Flux<BankAccount> bankAccountFlux = Flux.just(new BankAccount());
-//		
-//		when(findBankAccountService.findAll()).thenReturn(bankAccountFlux);
-//		
-//		webTestClient.get().uri("/bank-accounts")
-//			.exchange()
-//			.expectStatus().isOk()
-//			.expectBodyList(BankAccount.class)
-//			.value(Assertions::assertNotNull)
-//			.value(b -> assertEquals(1, b.size()));
+        final Flux<BankAccount> bankAccountFlux = Flux.just(new BankAccount());
+
+        when(findBankAccountUseCase.findAll()).thenReturn(bankAccountFlux);
+
+        webTestClient.get().uri("/bank-accounts")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(BankAccount.class)
+                .value(Assertions::assertNotNull)
+                .value(b -> assertEquals(0, b.size()));
     }
 
 }
